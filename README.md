@@ -4,83 +4,56 @@
 ![Focus](https://img.shields.io/badge/Focus-Endpoint_Hardening_%7C_Risk_Assessment-brightgreen?style=for-the-badge)
 ![Level](https://img.shields.io/badge/Level-Junior_SOC_/_Security_Analyst-orange?style=for-the-badge)
 
-## 📋 Resumen Ejecutivo
+# 🛡️ Caso de Estudio: Mitigación de Vulnerabilidades en Terminales y Selección de Soluciones EDR/EPP
 
-Este caso de estudio aborda la evaluación de riesgos de seguridad y el diseño de estrategias de mitigación para dos escenarios empresariales distintos:
-
-1. **Entorno Industrial / SCADA:** Una empresa de fabricación que requiere cumplir con estándares estrictos de ciberseguridad para adjudicarse un contrato comercial. Presenta vulnerabilidades críticas en sus terminales, incluyendo sistemas operativos obsoletos (Windows XP), uso descontrolado de medios USB, dispositivos BYOD no gestionados y falta de protección endpoint centralizada.
-2. **Startup Tecnológica en Crecimiento:** Una empresa en fase de escalamiento acelerado que requiere seleccionar una solución integral de protección de terminales (**EPP/EDR**) basada en la nube, optimizada para despliegue rápido, alta visibilidad y costo-efectividad.
-
-El objetivo de este proyecto es aplicar el principio de **Defensa en Profundidad (Defense in Depth)**, diseñar controles de compensación alineados con marcos internacionales (NIST SP 800-53 / CIS Controls) y justificar la selección de tecnología EDR Enterprise.
+## 📌 Descripción del Proyecto
+Este laboratorio presenta una evaluación técnica de riesgos y diseño de mitigaciones para terminales en entornos corporativos e industriales (SCADA/OT), junto con la ficha técnica para la selección de una plataforma EDR (Endpoint Detection and Response) basada en la nube.
 
 ---
 
 ## 🎯 Objetivos Técnicos
-
-* Evaluar la superficie de ataque y el impacto de vulnerabilidades en terminales críticas (OT/IT).
-* Proponer procedimientos de mitigación técnica y políticas de endurecimiento (**Endpoint Hardening**).
-* Implementar mecanismos de segmentación y control de acceso a la red (**NAC / BYOD Isolation**).
-* Diseñar estrategias de seguridad web y filtrado de dominio (**DNS Security / SWG**).
-* Evaluar y seleccionar una plataforma **EDR/EPP Cloud-Native** adecuada para empresas en crecimiento.
+- Evaluar la superficie de ataque e impacto de vulnerabilidades en terminales críticas (OT/IT).
+- Definir controles de hardening, segmentación (Modelo Purdue) y control de acceso a la red (NAC).
+- Seleccionar e integrar una solución EDR/EPP orientada a la visibilidad y respuesta de un SOC.
 
 ---
 
-## 🏗️ Caso de Estudio 1: Evaluación y Mitigación de Vulnerabilidades en Planta Industrial (SCADA)
+## 📋 Caso de Estudio 1: Matriz de Riesgos y Mitigación SCADA / OT
 
-### Contexto del Riesgo
-En los entornos de tecnología operativa (**OT / SCADA**), la disponibilidad y continuidad del negocio son prioritarias. A menudo, el software industrial crítico requiere ejecutarse sobre sistemas operativos legados sin soporte oficial de parches. Sin embargo, exponer estos sistemas a vectores de ataque físicos o de red incrementa exponencialmente el riesgo de incidentes graves (ej. ransomware industrial, exfiltración de datos, ataques a la cadena de suministro).
+En los entornos industriales, la continuidad operativa es prioritaria y suele convivir con sistemas heredados. A continuación se detallan los vectores de ataque identificados y sus controles de compensación:
 
-### Matriz de Evaluación de Riesgos y Mitigación Técnica
-
-| Vector / Vulnerabilidad Identificada | Nivel de Riesgo | Impacto Operativo / Amenaza | Controles de Mitigación Recomendados (Hardening) |
-| :--- | :---: | :--- | :--- |
-| **Sistemas Operativos Obsoletos (Windows XP en SCADA)** | **Crítico** | Ejecución remota de código (RCE), exploits sin parchear (*Zero-Day*), compromiso total del sistema industrial. | **Segmentación de Red y Aislamiento OT:** Ubicar los sistemas SCADA en una VLAN/zona industrial dedicada siguiendo el modelo Purdue. Aplicar reglas de Firewall/ACLs que bloqueen el tráfico entrante/saliente no esencial y deshabiliten el acceso a Internet. Aplicar microsegmentación e inspección profunda de paquetes (DPI) como control compensatorio. |
-| **Uso no controlado de medios USB en equipos críticos** | **Alto** | Introducción de malware (BadUSB, autorun, Stuxnet) y exfiltración de información confidencial. | **Hardening de Endpoints y GPO:** Deshabilitar puertos USB a nivel BIOS y mediante Políticas de Grupo (GPO). En caso de requerir transferencia de datos, implementar una **Estación de Desinfección USB (Kiosk)** y exigir el uso de pendrives corporativos cifrados con listas blancas de Hardware ID. |
-| **Acceso de dispositivos personales no gestionados (BYOD)** | **Alto** | Movimiento lateral de malware desde dispositivos de usuarios hacia la red de producción/servidores. | **Control de Acceso a la Red (NAC):** Desplegar una solución NAC (ej. Cisco ISE) para autenticación 802.1X y validación de la postura de seguridad. Aislar el tráfico BYOD en una **VLAN de Invitados** independiente con acceso únicamente a Internet y sin enrutamiento a la red OT/IT corporativa. |
-| **Navegación web libre hacia sitios maliciosos** | **Medio / Alto** | Phishing, descarga de malware de segunda etapa (*Drive-by download*) y conexiones Command & Control (C2). | **Filtrado Web / Secure Web Gateway:** Implementar protección a nivel DNS/Web (ej. Cisco Umbrella) para bloquear dominios maliciosos, categorías de riesgo y comunicaciones C2. Configurar el principio de **mínimo privilegio** restringiendo la navegación únicamente a sitios autorizados (*Whitelisting*). |
-| **Antivirus inconsistente y firmas desactualizadas** | **Alto** | Incapacidad para detectar amenazas modernas o ataques basados en código polimórfico/sin archivos (*Fileless*). | **Gestión Centralizada con EPP/EDR:** Reemplazar las instalaciones locales e individuales por una consola unificada de protección de terminales (EPP/EDR) administrada centralmente. Garantizar telemetría constante, actualizaciones automáticas de firmas y alertas en tiempo real hacia el SOC. |
-
----
-
-## 🚀 Caso de Estudio 2: Selección de Solución EDR/EPP para Startup en Crecimiento
-
-### Contexto del Negocio
-Una startup tecnológica requiere proteger sus terminales de trabajo (desarrolladores, administración, ventas) tras recibir financiamiento. La empresa opera en un modelo híbrido/remoto, planea duplicar su personal en corto tiempo y no cuenta con infraestructura física dedicada para servidores de seguridad (*On-Premises*).
-
-### Ficha Técnica de la Solución Seleccionada
-
-**Producto Recomendado:** `Cisco Secure Endpoint` *(o CrowdStrike Falcon Platform)*
-
-| Criterio / Característica | Especificación / Justificación Técnica |
+| Vulnerabilidad / Publicación | Recomendación Técnica Profesional (Mitigación) |
 | :--- | :--- |
-| **Modelo de Despliegue** | **100% Cloud-Native (SaaS):** No requiere inversión en servidores locales ni mantenimiento de infraestructura. Permite la instalación remota y automática del agente mediante herramientas MDM/RMM. |
-| **Capacidades de Prevención (EPP)** | Antivirus de Próxima Generación (NGAV), análisis heurístico, protección en tiempo real contra Ransomware, bloqueo de exploits y prevención de ejecución de scripts no autorizados. |
-| **Detección y Respuesta (EDR)** | Monitoreo continuo de procesos e hilos en memoria, análisis de comportamiento (*Behavioral Analysis*), retrospectiva de archivos (*File Retrospection*) para detectar amenazas latentes y aislamiento remoto del host comprometido con un solo clic. |
-| **Inteligencia de Amenazas** | Integración nativa con **Cisco Talos**, garantizando la actualización automática de indicadores de compromiso (IoCs) e inteligencia global en tiempo real. |
-| **Escalabilidad y Costos** | Esquema de licenciamiento por suscripción (*Pay-as-you-grow*). Permite escalar de manera transparente desde decenas hasta miles de endpoints sin degradación del servicio. |
-| **Compatibilidad Multiplataforma** | Soporte multiplataforma completo: Windows, macOS, Linux, iOS y Android. |
-| **Integración SOC / XDR** | Capacidad de enviar telemetría detallada a través de APIs REST y Syslog hacia un SIEM/XDR para correlación de eventos y automatización de respuestas (SOAR). |
+| **Versiones obsoletas del sistema operativo (Windows XP / SCADA)** | **Aislamiento de Red y Segmentación:** Aislar los sistemas SCADA en una VLAN/zona industrial dedicada (Modelo Purdue) sin acceso directo a Internet. Implementar reglas estrictas de Firewall/ACLs. Si no se puede actualizar el SO por incompatibilidad, aplicar compensación de controles con microsegmentación e inspección profunda de paquetes (DPI). |
+| **Sistemas críticos permiten el uso de medios USB** | **Hardening de Endpoints y Políticas de Grupo (GPO):** Deshabilitar puertos USB a nivel BIOS/Sistema Operativo mediante GPO. Si se requiere intercambio de datos, implementar un "USB Kiosk/Sanitization Station" (estación de desinfección) y usar únicamente pendrives cifrados corporativos con listas blancas de IDs de hardware. |
+| **Uso de dispositivos de computación personal en la red (BYOD)** | **Control de Acceso a la Red (NAC) y Red de Invitados:** Implementar una solución NAC (ej. Cisco ISE) para autenticar y evaluar la postura del dispositivo. Separar el tráfico de dispositivos personales en una **VLAN de Invitados/BYOD** aislada con acceso restringido solo a Internet y sin visibilidad hacia la red de fabricación o servidores. |
+| **Navegación libre por la WWW (Sitios dañinos)** | **Filtrado Web y DNS Security:** Desplegar una solución de seguridad web/DNS (ej. Cisco Umbrella, Secure Web Gateway) para bloquear categorías de riesgo, URLs maliciosas y conexiones C2 (Command & Control). Configurar la regla de "mínimo privilegio" para permitir navegación únicamente a sitios estrictamente necesarios para la operación. |
+| **Problemas de antivirus (Inconsistente / Desactualizado)** | **Gestión Centralizada con EPP/EDR:** Reemplazar consolas antivirus locales e individuales por una plataforma de protección de terminales centralizada en la nube o servidor local (EPP/EDR). Configurar actualizaciones automáticas de definiciones/telemetría y alertas en tiempo real hacia el equipo SOC. |
 
 ---
 
-## 🔍 Verificaciones y Buenas Prácticas Aplicadas
+## 🚀 Caso de Estudio 2: Ficha Técnica de Selección EDR / EPP
 
-1. **Principio de Mínimo Privilegio (Least Privilege):** Restricción de acceso administrativo en las terminales y limitación de puertos físicos y de red a los estrictamente necesarios.
-2. **Defensa en Profundidad (Defense in Depth):** Implementación de seguridad en múltiples niveles: Perímetro → Red/VLANs → Endpoint → Políticas de Usuario.
-3. **Controles Compensatorios en OT:** Ante la imposibilidad de actualizar el SO industrial, se reforzaron la segmentación de red y el monitoreo pasivo de tráfico.
+Evaluación técnica de una solución de protección de terminales en la nube (ej. **Cisco Secure Endpoint** / **CrowdStrike Falcon**) para una organización en rápido crecimiento:
+
+| Característica / Requisito | Valor / Justificación Técnica |
+| :--- | :--- |
+| **Nombre del Producto / Solución** | **Cisco Secure Endpoint** (anteriormente Cisco AMP for Endpoints) / **CrowdStrike Falcon Platform**. |
+| **Arquitectura de Despliegue** | **100% Cloud-Managed (SaaS):** No requiere infraestructura on-premise (servidores dedicados) en la startup. Permite desplegar agentes de forma remota y rápida a medida que la empresa contrata nuevo personal. |
+| **Capacidades de Prevención (EPP)** | Antivirus de próxima generación (NGAV), análisis heurístico, protección contra ransomware, listas de bloqueo/permitidos y prevención de exploits en tiempo real. |
+| **Capacidades de Detección y Respuesta (EDR)** | Monitoreo continuo de procesos, análisis del comportamiento de archivos (Behavioral Analysis), retrospectiva de archivos (File Retrospection) para detectar amenazas que cambiaron de reputación, y aislamiento remoto del host comprometido. |
+| **Inteligencia de Amenazas (Threat Intelligence)** | Integración nativa con **Cisco Talos** (o CrowdStrike Falcon Intelligence), lo que permite actualizar firmas y patrones de ataque automáticamente a nivel global en segundos. |
+| **Escalabilidad y Flexibilidad** | Licenciamiento basado en suscripción por agente/usuario. Ideal para startups: se paga por lo que se usa y escala sin fricción de 10 a 1,000+ endpoints. |
+| **Compatibilidad Multiplataforma** | Soporte completo para Windows, macOS, Linux, iOS y Android (cubriendo equipos corporativos y móviles). |
+| **Integración SOC / XDR** | Capacidad de enviar telemetría mediante APIs/Syslog hacia soluciones SIEM / XDR para correlación de eventos y automatización de respuestas (SOAR). |
 
 ---
 
 ## 💡 Conceptos Clave Aprendidos
-
-* **Diferencia entre Antivirus Tradicional y EDR:** El antivirus tradicional depende de firmas estáticas (hashes de malware conocido), mientras que el EDR analiza comportamientos anómalos en memoria/procesos, detectando ataques de día cero (*Zero-Day*) y amenazas *fileless*.
-* **Modelo Purdue para Redes Industriales:** Principio de diseño que separa la red corporativa (IT) de la red de control de proceso (OT) mediante capas de seguridad y zonas DMZ industriales.
-* **Network Access Control (NAC):** Mecanismo para auditar y autorizar dispositivos antes de otorgarles acceso a la red corporativa.
+* **Controles Compensatorios:** Estrategias implementadas cuando un control de seguridad primario (como actualizar un SO) no es técnicamente viable.
+* **Modelo Purdue:** Estructura de referencia para segmentar redes industriales y proteger sistemas SCADA de la red corporativa/Internet.
+* **Antivirus Tradicional vs. EDR:** Cambio de paradigma de detección basada en firmas estáticas hacia el análisis continuo del comportamiento del sistema.
 
 ---
-
-## 📌 Conclusión
-
-La seguridad de las terminales es la última línea de defensa contra intrusiones en la red corporativa o industrial. La implementación de medidas de hardening (desactivación de USB, segmentación de red, filtrado DNS) junto con el despliegue de soluciones **EDR administradas en la nube** proporciona la visibilidad, prevención y capacidad de respuesta requeridas tanto para proteger infraestructuras críticas (SCADA) como para habilitar el crecimiento seguro de organizaciones modernas.
-
+- GitHub: [@GonzaloGaBa](https://github.com/GonzaloGaBa)
 ---
